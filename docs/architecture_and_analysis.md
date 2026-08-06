@@ -11,9 +11,12 @@
 
 - Un cliente no repite colección dentro de sus últimas 4 rotaciones, salvo imposibilidad absoluta.
 - La asignación toma primero stock compatible, luego el lote que más tiempo lleva en stock y, en empate, el de menor numeración.
+- Las colecciones recién lanzadas se introducen primero en clientes activos más antiguos, siempre que el trimestre tenga crecimiento neto suficiente para justificar compras de lanzamiento.
 - Si no existe lote compatible, se compra automáticamente un lote nuevo de una colección activa compatible.
 - Las colecciones viven 12 trimestres exactos y se retiran automáticamente en el trimestre 13.
 - Las bajas aleatorias se aplican desde el trimestre configurado y devuelven el lote al stock de inmediato.
+- Las bajas del trimestre descuentan presupuesto de compra para lanzamientos, de forma que un volumen equivalente de altas no dispare compras adicionales y no se genere stock evitable.
+- El reporting incorpora un gemelo operativo: detecta cuántas reutilizaciones se apoyan en retornos del mismo trimestre y las traduce a `buffer puente` para un modelo real de entrega antes de recogida.
 
 ## Supuestos explícitos de esta primera versión
 
@@ -22,6 +25,8 @@
 - El stock inicial parte vacío salvo que se configure `preloaded_stock_by_collection`.
 - El calendario logístico usa slots de cohorte separados por 2 semanas; en esta primera versión el slot se asigna de forma determinista según el trimestre de alta.
 - Cuando hay que comprar un lote nuevo y hay varias colecciones compatibles, se elige la colección activa más antigua y, en empate, la primera por nombre.
+- La prioridad por antigüedad se resuelve por fecha real de alta del cliente, no por slot logístico.
+- El gemelo operativo asume que un lote devuelto dentro del trimestre no está disponible de inmediato para la misma ola y, por tanto, exige un lote puente equivalente.
 
 ## Cuellos de botella potenciales
 
