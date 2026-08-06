@@ -2,7 +2,7 @@
   "simulation_name": "auravita_base",
   "start_year": 2026,
   "simulation_quarters": 12,
-  "quarterly_signups": [20, 30, 15, 18, 22, 20, 17, 19, 24, 18, 16, 21],
+  "quarterly_signups": [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
   "initial_collections": ["Aura", "Natura", "Esencia", "Horizonte"],
   "future_collections": ["Origen", "Bruma", "Luz", "Terracota", "Calma", "Nebula"],
   "collections_per_year": 2,
@@ -25,6 +25,10 @@
     "max_per_quarter": 3,
     "random_seed": 42
   },
+  "signup_policy": {
+    "mode": "base_plus_churn",
+    "base_signups_per_quarter": 10
+  },
   "naming": {
     "client_prefix": "C",
     "lot_prefix": "L",
@@ -36,10 +40,13 @@
     "allow_repeat_when_no_alternative": true,
     "new_lot_collection_strategy": "oldest_active_then_name"
   },
+  "purchase_policy": {
+    "fixed_new_lots_per_quarter": 10
+  },
   "logistics": {
     "warehouse_location": "ALMACEN",
     "retired_location": "RETIRADO",
     "repair_location": "REPARACION",
-    "cohort_gap_weeks": 2
+    "cohort_gap_weeks": 1
   }
 }
