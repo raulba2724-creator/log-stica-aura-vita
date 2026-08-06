@@ -2,6 +2,11 @@
 
 Motor logístico modular para simular altas, bajas, rotaciones trimestrales, reutilización de lotes y retirada automática de colecciones.
 
+Reglas clave actuales:
+- Las colecciones recién lanzadas se priorizan para los clientes activos más antiguos cuando existe crecimiento neto del trimestre.
+- Las bajas compensan las altas para el presupuesto de compra de lanzamientos, reduciendo compras que solo generarían stock sobrante.
+- El dashboard incluye un gemelo operativo para estimar `pool listo`, `retornos a reacondicionado` y `buffer puente` cuando la entrega sucede antes de la recogida.
+
 ## Estructura
 
 - `src/auravita_logistics/config.py`: configuración centralizada y validación.
@@ -27,6 +32,14 @@ PYTHONPATH=src python -m auravita_logistics.main --config config/default_config.
 ```
 
 El dashboard HTML permite revisar la simulación visualmente en el navegador.
+
+## Interfaz local
+
+```bash
+PYTHONPATH=src python3 -m auravita_logistics.ui --config config/default_config.json --port 8765
+```
+
+Después abre `http://127.0.0.1:8765` en el navegador para editar parámetros, lanzar simulaciones y abrir el dashboard generado.
 
 ## Tests
 
