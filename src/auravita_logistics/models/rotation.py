@@ -17,6 +17,7 @@ class RotationRecord:
     purchased_new: bool
     forced_repeat: bool
     reason: str
+    same_quarter_stock_reuse: bool = False
 
 
 @dataclass
@@ -30,3 +31,6 @@ class QuarterSummary:
     retired_lots: int
     final_stock: int
     estimated_cost: float
+    ready_pool_start: int = 0
+    reconditioning_inflow: int = 0
+    bridge_pool_required: int = 0
