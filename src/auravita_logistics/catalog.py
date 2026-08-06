@@ -69,6 +69,16 @@ class CollectionCatalog:
             key=lambda name: (self.collections[name].launch_quarter_index, name),
         )
 
+    def launched_collection_names(self, quarter_index: int) -> list[str]:
+        return sorted(
+            [
+                collection.name
+                for collection in self.collections.values()
+                if collection.launch_quarter_index == quarter_index
+            ],
+            key=lambda name: (self.collections[name].launch_quarter_index, name),
+        )
+
     def collections_retiring_in(self, quarter_index: int) -> list[str]:
         return sorted(
             [
