@@ -23,8 +23,10 @@ python -m auravita_logistics.main --config config/default_config.json --json-out
 O bien:
 
 ```bash
-PYTHONPATH=src python -m auravita_logistics.main --config config/default_config.json
+PYTHONPATH=src python -m auravita_logistics.main --config config/default_config.json --html-output outputs/report.html
 ```
+
+El dashboard HTML permite revisar la simulación visualmente en el navegador.
 
 ## Tests
 
