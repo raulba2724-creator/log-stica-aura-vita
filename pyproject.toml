@@ -12,6 +12,7 @@ dependencies = []
 
 [project.scripts]
 auravita-logistics = "auravita_logistics.main:main"
+auravita-logistics-ui = "auravita_logistics.ui:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
