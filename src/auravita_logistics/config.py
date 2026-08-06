@@ -37,11 +37,29 @@ class ChurnConfig:
 
 
 @dataclass(frozen=True)
+class SignupPolicyConfig:
+    mode: str = "fixed_schedule"
+    base_signups_per_quarter: int = 0
+
+    def resolve_signups(self, scheduled_signups: int, churn_count: int) -> int:
+        if self.mode == "fixed_schedule":
+            return scheduled_signups
+        if self.mode == "base_plus_churn":
+            return scheduled_signups + churn_count
+        raise ValueError(f"Unsupported signup policy mode: {self.mode}")
+
+
+@dataclass(frozen=True)
 class LogisticsConfig:
     warehouse_location: str = "ALMACEN"
     retired_location: str = "RETIRADO"
     repair_location: str = "REPARACION"
-    cohort_gap_weeks: int = 2
+    cohort_gap_weeks: int = 1
+
+
+@dataclass(frozen=True)
+class PurchasePolicyConfig:
+    fixed_new_lots_per_quarter: int = 0
 
 
 @dataclass(frozen=True)
@@ -58,9 +76,11 @@ class SimulationConfig:
     purchase_cost_by_collection: dict[str, float] = field(default_factory=dict)
     preloaded_stock_by_collection: dict[str, int] = field(default_factory=dict)
     churn: ChurnConfig = field(default_factory=ChurnConfig)
+    signup_policy: SignupPolicyConfig = field(default_factory=SignupPolicyConfig)
     naming: NamingConfig = field(default_factory=NamingConfig)
     assignment: AssignmentConfig = field(default_factory=AssignmentConfig)
     logistics: LogisticsConfig = field(default_factory=LogisticsConfig)
+    purchase_policy: PurchasePolicyConfig = field(default_factory=PurchasePolicyConfig)
 
     @classmethod
     def from_dict(cls, raw_data: dict[str, Any]) -> "SimulationConfig":
@@ -81,9 +101,11 @@ class SimulationConfig:
                 name: int(quantity) for name, quantity in raw_data.get("preloaded_stock_by_collection", {}).items()
             },
             churn=ChurnConfig(**raw_data.get("churn", {})),
+            signup_policy=SignupPolicyConfig(**raw_data.get("signup_policy", {})),
             naming=NamingConfig(**raw_data.get("naming", {})),
             assignment=AssignmentConfig(**raw_data.get("assignment", {})),
             logistics=LogisticsConfig(**raw_data.get("logistics", {})),
+            purchase_policy=PurchasePolicyConfig(**raw_data.get("purchase_policy", {})),
         )
         config.validate()
         return config
@@ -103,6 +125,14 @@ class SimulationConfig:
             raise ValueError("lookback_rotations must be >= 1")
         if self.churn.min_per_quarter > self.churn.max_per_quarter:
             raise ValueError("churn min_per_quarter cannot be greater than max_per_quarter")
+        if self.signup_policy.mode not in {"fixed_schedule", "base_plus_churn"}:
+            raise ValueError("signup_policy mode must be fixed_schedule or base_plus_churn")
+        if self.signup_policy.base_signups_per_quarter < 0:
+            raise ValueError("signup_policy base_signups_per_quarter must be >= 0")
+        if self.logistics.cohort_gap_weeks < 1:
+            raise ValueError("logistics cohort_gap_weeks must be >= 1")
+        if self.purchase_policy.fixed_new_lots_per_quarter < 0:
+            raise ValueError("purchase_policy fixed_new_lots_per_quarter must be >= 0")
 
     def active_purchase_cost(self, collection_name: str) -> float:
         return self.purchase_cost_by_collection.get(collection_name, self.default_purchase_cost)
